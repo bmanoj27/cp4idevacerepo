@@ -1,0 +1,55 @@
+DECLARE CountryCodeCache SHARED ROW; 
+
+CREATE FILTER MODULE FlowFileExists_FilterUpdateCache
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN		
+		IF (CountryCodeCache.LastModified IS NULL) OR
+			(CAST(LocalEnvironment.File.LastModified AS GMTTIMESTAMP) > CAST(CountryCodeCache.LastModified AS GMTTIMESTAMP)) THEN
+				-- This means:
+				--   The cache has not yet been initialised OR
+				--   The latest file is more up to date than the cache
+				-- So, update the cache!				
+				RETURN TRUE;					
+		ELSE 
+				-- This means the cache is more up to date than the latest file, so don't update the cache!
+				RETURN FALSE;
+		END IF;
+	END;
+END MODULE;
+
+CREATE COMPUTE MODULE FlowFileExists_ComputeUpdateCache
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		SET OutputRoot = InputRoot;
+		FOR record AS InputRoot.DFDL.CSV.record[] DO
+			CREATE LASTCHILD OF CountryCodeCache NAME record.countrycode VALUE record.countryname;			
+		END FOR;
+		SET CountryCodeCache.LastModified = CURRENT_GMTTIMESTAMP;
+		-- Put the LastModified time in to the Environment so the trace node can access it 
+		SET Environment.CacheLastModified = CountryCodeCache.LastModified;
+		RETURN TRUE;					
+	END;
+END MODULE;
+
+CREATE COMPUTE MODULE FlowFileExists_TranslateCountryCode
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		CALL CopyMessageHeaders();
+		CREATE LASTCHILD OF OutputRoot DOMAIN('JSON');
+		SET OutputRoot.JSON.Data.CountryCode = InputRoot.JSON.Data.CountryCode;
+		SET OutputRoot.JSON.Data.CountryName = COALESCE(CountryCodeCache.{FIELDVALUE(InputRoot.JSON.Data.CountryCode)},'Unknown');
+		SET OutputRoot.JSON.Data.CacheInfo = COALESCE(('Cache was last updated at ' || CAST(CountryCodeCache.LastModified AS CHAR)), 'Cache has not yet been initialised');
+		RETURN TRUE;
+	END;
+
+	CREATE PROCEDURE CopyMessageHeaders() BEGIN
+		DECLARE I INTEGER 1;
+		DECLARE J INTEGER;
+		SET J = CARDINALITY(InputRoot.*[]);
+		WHILE I < J DO
+			SET OutputRoot.*[I] = InputRoot.*[I];
+			SET I = I + 1;
+		END WHILE;
+	END;
+
+END MODULE;

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ComIbmCompute.msgnode="ComIbmCompute.msgnode" xmlns:ComIbmFileExists.msgnode="ComIbmFileExists.msgnode" xmlns:ComIbmFileRead.msgnode="ComIbmFileRead.msgnode" xmlns:ComIbmFilter.msgnode="ComIbmFilter.msgnode" xmlns:ComIbmTrace.msgnode="ComIbmTrace.msgnode" xmlns:ComIbmWSInput.msgnode="ComIbmWSInput.msgnode" xmlns:ComIbmWSReply.msgnode="ComIbmWSReply.msgnode" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:eflow="http://www.ibm.com/wbi/2005/eflow"
+    xmlns:utility="http://www.ibm.com/wbi/2005/eflow_utility" nsURI="FlowFileExists.msgflow" nsPrefix="FlowFileExists.msgflow">
+  <eClassifiers xmi:type="eflow:FCMComposite" name="FCMComposite_1" nodeLayoutStyle="RECTANGLE">
+    <eSuperTypes href="http://www.ibm.com/wbi/2005/eflow#//FCMBlock"/>
+    <translation xmi:type="utility:TranslatableString" key="FlowFileExists" bundleName="FlowFileExists" pluginId="ApplicationFileExists"/>
+    <colorGraphic16 xmi:type="utility:GIFFileGraphic" resourceName="platform:/plugin/ApplicationFileExists/icons/full/obj16/FlowFileExists.gif"/>
+    <colorGraphic32 xmi:type="utility:GIFFileGraphic" resourceName="platform:/plugin/ApplicationFileExists/icons/full/obj30/FlowFileExists.gif"/>
+    <composition>
+      <nodes xmi:type="ComIbmFileExists.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_1" location="32,86" inputDirectory="C:\temp\FileExistsDemo" waitInterval="20">
+        <translation xmi:type="utility:ConstantString" string="File Exists"/>
+      </nodes>
+      <nodes xmi:type="ComIbmTrace.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_8" location="923,101" destination="file" filePath="C:\temp\TraceFileExists.txt" pattern="===== Trace at ${CURRENT_GMTTIMESTAMP} =====&#xD;&#xA;File Name = ${LocalEnvironment.File.Name}&#xD;&#xA;File LastModified = ${LocalEnvironment.File.LastModified}&#xD;&#xA;Cache LastModified = ${Environment.CacheLastModified}&#xD;&#xA;The flow has updated its cache, either because it has not previously been initialised, or because the FileExists node was triggered by a file whose LastModified timestamp was more recent than the time of the last cache update.">
+        <translation xmi:type="utility:ConstantString" string="CacheUpdated"/>
+      </nodes>
+      <nodes xmi:type="ComIbmFileRead.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_9" location="474,103" inputDirectory="C:\temp\FileExistsDemo" fileDispositionAction="delete" requestDirectoryLocation="$LocalEnvironment/File/Directory" requestNameLocation="$LocalEnvironment/File/Name" messageDomainProperty="DFDL" messageTypeProperty="{}:CSV">
+        <translation xmi:type="utility:ConstantString" string="File Read"/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_12" location="679,99" computeExpression="esql://routine/#FlowFileExists_ComputeUpdateCache.Main">
+        <translation xmi:type="utility:ConstantString" string="UpdateCache"/>
+      </nodes>
+      <nodes xmi:type="ComIbmFilter.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_13" location="229,86" filterExpression="esql://routine/#FlowFileExists_FilterUpdateCache.Main">
+        <translation xmi:type="utility:ConstantString" string="UpdateCache?"/>
+      </nodes>
+      <nodes xmi:type="ComIbmWSReply.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_15" location="532,222">
+        <translation xmi:type="utility:ConstantString" string="HTTP Reply"/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_16" location="271,221" computeExpression="esql://routine/#FlowFileExists_TranslateCountryCode.Main">
+        <translation xmi:type="utility:ConstantString" string="TranslateCountryCode"/>
+      </nodes>
+      <nodes xmi:type="ComIbmTrace.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_17" location="474,49" destination="file" filePath="C:\temp\TraceFileExists.txt" pattern="===== Trace at ${CURRENT_GMTTIMESTAMP} =====&#xD;&#xA;File Name = ${LocalEnvironment.File.Name}&#xD;&#xA;File LastModified = ${LocalEnvironment.File.LastModified}&#xD;&#xA;There is nothing further for the flow to do at this time, because the FileExists node was triggered by a file whose LastModified timestamp was earlier than the latest cache update time.">
+        <translation xmi:type="utility:ConstantString" string="CacheNotUpdated"/>
+      </nodes>
+      <nodes xmi:type="ComIbmWSInput.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_3" location="35,225" URLSpecifier="/TranslateCountryCode" messageDomainProperty="JSON">
+        <translation xmi:type="utility:ConstantString" string="HTTP Input"/>
+      </nodes>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_7" targetNode="FCMComposite_1_9" sourceNode="FCMComposite_1_13" sourceTerminalName="OutTerminal.true" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_8" targetNode="FCMComposite_1_12" sourceNode="FCMComposite_1_9" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_9" targetNode="FCMComposite_1_13" sourceNode="FCMComposite_1_1" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_12" targetNode="FCMComposite_1_15" sourceNode="FCMComposite_1_16" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_13" targetNode="FCMComposite_1_8" sourceNode="FCMComposite_1_12" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_14" targetNode="FCMComposite_1_17" sourceNode="FCMComposite_1_13" sourceTerminalName="OutTerminal.false" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_1" targetNode="FCMComposite_1_16" sourceNode="FCMComposite_1_3" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+    </composition>
+    <propertyOrganizer/>
+    <stickyBoard/>
+  </eClassifiers>
+</ecore:EPackage>
