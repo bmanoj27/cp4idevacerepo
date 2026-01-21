@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<MessagePool xmlns="http://wwww.ibm.com/iib/test/1.0.0">
-    <InputMessage timestamp="1676285037779" nodeId="FCMComposite_1_5" name="new message 1" id="1676285037779-6">
-        <plainText>User_ID%2CName%2CBuilding_ID%2CBuilding_Name%2CFlood_ID%2CFloor%2CCube_ID%2CCube_Number%0D%0A1000000%2CAniket+Mulye%2C1000001%2COne+Canon+Park-Headquarters%2C1000004%2C1%2C1000739%2C1-502A%0D%0AECI46520%2CTest5+manager7%2C1000001%2COne+Canon+Park-Headquarters%2C1000002%2CLL%2C1000496%2CLL-108%0D%0AECI46524%2CTest9+manager11%2C1000001%2COne+Canon+Park-Headquarters%2C1000002%2CLL%2C1000525%2CLL-129%0D%0AECI46525%2CTest10+manager12%2C1000001%2COne+Canon+Park-Headquarters%2C1000002%2CLL%2C1000580%2CLL-177</plainText>
-    </InputMessage>
-</MessagePool>
