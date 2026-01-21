@@ -1,0 +1,36 @@
+apiVersion: appconnect.ibm.com/v1beta1
+kind: IntegrationRuntime
+metadata:
+  labels:
+    appconnect.ibm.com/designerapiflow: 'false'
+    appconnect.ibm.com/designereventflow: 'false'
+    appconnect.ibm.com/toolkitflow: 'true'
+    backup.appconnect.ibm.com/component: integrationruntime
+  name: argoone
+  namespace: tools
+spec:
+  barURL:
+    - >-
+      https://ace-dashboard-dash.tools:3443/v1/directories/cp4i_demo_14Jan2026?f0f8117e-2da0-430f-94c5-dc3e7ac23a39
+  configurations:
+    - demo-ir-adminssl
+  forceFlowsHTTPS:
+    enabled: true
+  license:
+    accept: true
+    license: L-XRNH-47FJAW
+    use: CloudPakForIntegrationProduction
+  logFormat: basic
+  replicas: 3
+  template:
+    spec:
+      containers:
+        - name: runtime
+          resources:
+            limits:
+              cpu: 1000m
+              memory: 768Mi
+            requests:
+              cpu: 1000m
+              memory: 768Mi
+  version: '12.0'
